@@ -159,3 +159,4 @@ Cargo.lock
 
 # Ignore .exercism folder which contain sensitive data
 .exercism
+.DS_Store
