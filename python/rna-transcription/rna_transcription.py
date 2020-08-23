@@ -1,6 +1,4 @@
-def to_rna(dna_strand):
-    rna = ""
+def to_rna(dna_strand: str):
     conversion = {"G": "C", "C": "G", "T": "A", "A": "U"}
-    for nucleotide in dna_strand:
-        rna += conversion[nucleotide]
-    return rna
+    translation = dna_strand.maketrans(conversion)
+    return dna_strand.translate(translation)
