@@ -1,20 +1,24 @@
 import random
 import string
+from itertools import product
+
+ALPHABET = string.ascii_uppercase
+prefix = ["".join(p) for p in product(ALPHABET, ALPHABET)]
+suffix = [str(n).zfill(3) for n in range(1000)]
+available_names = ["".join(p) for p in product(prefix, suffix)]
+used_names = []
+
 
 class Robot:
-	USED_NAMES = set()
-	ALPHABET = string.ascii_uppercase
-	DIGITS = string.digits
-	def __init__(self):
-		self.name = self._generate_random_name()
+    def __init__(self):
+        self.name = self.generate_random_name()
 
-	def reset(self):
-		self.name = self._generate_random_name()
+    def reset(self):
+        self.__init__()
 
-	@classmethod
-    def _generate_random_name(letters: int, numbers: int):
-    	letters_alphabet = string.ascii_uppercase
-    	digits_alphabet = string.digits
-    	result_letters = random.choice(letters_alphabet) for i in range(letters)
-    	result_numbers = random.choice(digits_alphabet) for i in range(numbers)
-    	return ''.join(result_letters + result_numbers)
+    @staticmethod
+    def generate_random_name():
+        name = random.choice(available_names)
+        available_names.remove(name)
+        used_names.append(name)
+        return name
