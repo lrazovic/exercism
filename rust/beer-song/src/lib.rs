@@ -10,7 +10,6 @@ pub fn verse(n: u32) -> String {
 pub fn sing(start: u32, end: u32) -> String {
     let mut start_string = verse(start);
     for i in (end..start).rev() {
-        println!("{}", i);
         let current_verse = verse(i);
         start_string = [start_string, current_verse].join("\n");
     }
