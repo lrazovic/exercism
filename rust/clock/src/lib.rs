@@ -5,8 +5,8 @@ pub struct Clock {
     time: i32,
 }
 
-impl Display for Clock {
-    fn fmt(&self, f: &mut Formatter) -> Result {
+impl fmt::Display for Clock {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         write!(f, "{:02}:{:02}", self.time / 60, self.time % 60)
     }
 }
