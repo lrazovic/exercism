@@ -1,6 +1,6 @@
-use std::fmt::{Display, Formatter, Result};
+use std::fmt;
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, Eq, PartialEq)]
 pub struct Clock {
     time: i32,
 }
