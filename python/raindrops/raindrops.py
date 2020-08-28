@@ -6,6 +6,4 @@ def convert(number):
         raindrops += "Plang"
     if not number % 7:
         raindrops += "Plong"
-    if raindrops == "":
-        return str(number)
-    return raindrops
+    return str(number) if not raindrops else raindrops
