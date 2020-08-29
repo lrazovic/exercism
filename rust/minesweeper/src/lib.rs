@@ -1,77 +1,49 @@
-/*
-pub fn annotate(minefield: &[&str]) -> Vec<String> {
-    minefield
-        .iter() // Iterate over the lines.
-        .enumerate() // Keep track of the row and col.
-        .map(|(row, line)| {
-            line.chars()
-                .enumerate()
-                .map(|(col, c)| match c {
-                    '*' => String::from(c),
-                    _ => minefield
-                        .iter()
-                        .skip(row.checked_sub(1).unwrap_or(0))
-                        .take(3.min(2 + row))
-                        .map(|s| {
-                            s.chars()
-                                .skip(col.checked_sub(1).unwrap_or(0))
-                                .take(3.min(2 + col))
-                                .filter(|c| *c == '*')
-                                .count()
-                        })
-                        .fold(0, |acc, x| acc + x)
-                        .to_string()
-                        .replace("0", " "),
-                })
-                .collect::<String>()
-        })
-        .collect()
-}
-*/
-use std::collections::HashSet;
-
 const DELTAS: [(isize, isize); 8] = [
-    (0, 1),
-    (0, -1),
-    (1, 0),
-    (-1, 0),
     (-1, -1),
-    (1, -1),
-    (1, 1),
+    (-1, 0),
     (-1, 1),
+    (0, -1),
+    (0, 1),
+    (1, -1),
+    (1, 0),
+    (1, 1),
 ];
 
-pub fn annotate(field: &[&str]) -> Vec<String> {
-    let mines: HashSet<_> = field
+pub fn annotate(minefield: &[&str]) -> Vec<String> {
+    if minefield.len() == 0 {
+        return vec![];
+    }
+    let mut board = minefield
         .iter()
-        .enumerate()
-        .flat_map(|(y, row)| {
-            row.chars()
-                .enumerate()
-                .filter(|(_, col)| *col == '*')
-                .map(move |(x, _)| (x, y))
-        })
-        .collect();
+        .map(|s| s.chars().collect::<Vec<_>>())
+        .collect::<Vec<_>>();
+    let rows = board.len();
+    let cols = board[0].len();
+    for row in 0..rows {
+        for col in 0..cols {
+            // Skip cell if it contains a mine
+            if board[row][col] == '*' {
+                continue;
+            }
+            // Checking all the neighbours
+            let neighbors_count = DELTAS
+                .iter()
+                // Calc the coordinates
+                .map(|(rd, cd)| (row as isize + rd, col as isize + cd))
+                // Skip non valid coordinates
+                .filter(|(r, c)| *r >= 0 && (*r as usize) < rows && *c >= 0 && (*c as usize) < cols)
+                // Keep only mines
+                .filter(|(r, c)| board[*r as usize][*c as usize] == '*')
+                // Count the elements, the mines
+                .count();
 
-    field
-        .iter()
-        .enumerate()
-        .map(|(y, row)| {
-            row.chars()
-                .enumerate()
-                .map(|(x, col)| {
-                    let cnt = DELTAS
-                        .iter()
-                        .map(|(dx, dy)| ((x as isize + dx) as usize, (y as isize + dy) as usize))
-                        .filter(|offset| mines.contains(offset))
-                        .count();
-                    match (col, cnt) {
-                        ('*', _) => '*',
-                        (_, 0) => ' ',
-                        _ => (cnt as u8 + b'0') as char,
-                    }
-                })
-                .collect::<String>()
-        })
-        .collect()
+            // If there are any mines, save the counter
+            if neighbors_count > 0 {
+                board[row][col] = (neighbors_count as u8 + b'0') as char;
+            }
+        }
+    }
+
+    // Convert to Vec<String> as expexted
+    board.iter().map(|x| x.iter().collect()).collect()
 }
